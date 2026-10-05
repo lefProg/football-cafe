@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Football Cafe looks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Schibsted+Grotesk:wght@400;500;600;700;800&family=Sofia+Sans+Extra+Condensed:ital,wght@0,600;0,800;0,900;1,900&family=Yeseva+One&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid currentColor;outline-offset:3px}
+[hidden]{display:none !important}
+
+/* ---------- picker bar (not part of any look) ---------- */
+.picker{position:sticky;top:0;z-index:50;display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 20px;background:#fff;border-bottom:1px solid #d6d6dc;font:500 14px/1.2 system-ui,sans-serif;color:#1f1f24}
+.picker p{margin:0 6px 0 0;color:#5a5a66}
+.picker [role=tab]{padding:8px 14px;border:1px solid #c6c6cf;background:#fff;border-radius:999px;cursor:pointer}
+.picker [role=tab][aria-selected=true]{background:#1f1f24;color:#fff;border-color:#1f1f24}
+.picker .choose{margin-left:auto;font-weight:600;padding:9px 18px;border-radius:999px;border:0;background:#176b41;color:#fff;cursor:pointer}
+.picker .done{color:#176b41;font-weight:600}
+
+/* ---------- shared chart skeleton ---------- */
+.chart{margin:0}
+.chart .head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.chart .seg{display:flex}
+.chart .seg button{cursor:pointer}
+.chart .bars{display:flex;align-items:flex-end;position:relative;margin-top:14px}
+.chart .bars::after{content:"";position:absolute;left:0;right:0;bottom:26px;height:1px;background:currentColor;opacity:.4}
+.chart .col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:206px}
+.chart .bar{width:min(30px,56%);border-radius:4px 4px 0 0;transition:height .25s ease}
+.chart .val{font-size:14px;margin-bottom:5px;visibility:hidden;font-variant-numeric:tabular-nums}
+.chart .col.show .val,.chart .col:hover .val{visibility:visible}
+.chart .lab{height:26px;line-height:30px;font-size:14px;font-variant-numeric:tabular-nums}
+.chart .note{margin:10px 0 0;font-size:14px;opacity:.75}
+@media (prefers-reduced-motion:reduce){.chart .bar{transition:none}}
+
+/* =====================================================
+   LOOK A — Pink paper (the sports daily + pools coupon)
+   ===================================================== */
+.a{--paper:#F6CBBF;--paper2:#FBE4DC;--ink:#15234B;--stamp:#C4162A;background:var(--paper);color:var(--ink);font-family:'Newsreader',Georgia,serif;min-height:100vh;padding-bottom:96px}
+.a .wrap{max-width:1240px;margin:0 auto;padding:0 32px}
+.a .mast{background:var(--ink);color:var(--paper)}
+.a .mast .wrap{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-top:10px;padding-bottom:8px}
+.a .name{font:italic 900 46px/1 'Sofia Sans Extra Condensed',sans-serif;text-transform:uppercase}
+.a .mast nav{display:flex;gap:30px;font:600 22px/1 'Sofia Sans Extra Condensed',sans-serif}
+.a .dateline{display:flex;justify-content:space-between;gap:16px;padding:10px 0;font-size:16px;font-style:italic}
+.a h1{font:900 clamp(60px,10.4vw,152px)/.86 'Sofia Sans Extra Condensed',sans-serif;text-transform:uppercase;margin:14px 0 30px;text-wrap:balance}
+.a .cols{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:60px;align-items:start;border-top:4px solid var(--ink);padding-top:30px}
+.a .stand{font-size:27px;line-height:1.28;font-weight:500;margin:0 0 22px;max-width:30em}
+.a .by{display:flex;align-items:center;gap:22px;margin:0 0 30px;font-size:17px;font-style:italic}
+.a .stamp{font:800 20px/1 'Sofia Sans Extra Condensed',sans-serif;font-style:normal;text-transform:uppercase;letter-spacing:.06em;color:var(--stamp);border:3px solid var(--stamp);padding:6px 10px 5px;transform:rotate(-5deg);border-radius:3px}
+.a .body p{font-size:20.5px;line-height:1.6;margin:0 0 20px;max-width:33em}
+.a .chart{border-top:4px solid var(--ink);margin-top:38px;padding-top:14px;max-width:680px}
+.a .chart h3{font:800 34px/1 'Sofia Sans Extra Condensed',sans-serif;text-transform:uppercase;margin:0}
+.a .chart .sub{margin:4px 0 0;font-size:17px;font-style:italic}
+.a .chart .seg button{font:600 19px/1 'Sofia Sans Extra Condensed',sans-serif;padding:7px 14px 6px;background:none;border:2px solid var(--ink);margin-left:-2px}
+.a .chart .seg button[aria-pressed=true]{background:var(--ink);color:var(--paper)}
+.a .chart .bar{background:var(--ink)}
+
+.a .coupon{background:var(--paper2);border:2px solid var(--ink);position:sticky;top:76px}
+.a .coupon header{background:var(--ink);color:var(--paper2);padding:13px 20px 11px;display:flex;justify-content:space-between;align-items:baseline}
+.a .coupon h2{font:800 36px/1 'Sofia Sans Extra Condensed',sans-serif;text-transform:uppercase;margin:0}
+.a .serial{font:600 19px/1 'Sofia Sans Extra Condensed',sans-serif;letter-spacing:.1em}
+.a .how{padding:14px 20px 4px;margin:0;font-size:17.5px;line-height:1.4}
+.a .rows{list-style:none;margin:8px 0 0;padding:0 20px;counter-reset:c}
+.a .rows li{display:grid;grid-template-columns:24px minmax(0,1fr) auto;column-gap:12px;row-gap:10px;align-items:start;padding:14px 0;border-top:1.5px dashed var(--ink)}
+.a .rows li::before{counter-increment:c;content:counter(c);font:800 28px/1 'Sofia Sans Extra Condensed',sans-serif}
+.a .q{font-size:18.5px;line-height:1.28;font-weight:500}
+.a .boxes{display:flex;gap:12px}
+.a .vote{display:grid;justify-items:center;gap:5px;background:none;border:0;padding:0;font:600 15px/1 'Sofia Sans Extra Condensed',sans-serif;letter-spacing:.04em;cursor:pointer}
+.a .vote i{width:34px;height:34px;border:2px solid var(--ink);background:var(--paper2);display:block}
+.a .vote[aria-pressed=true] i{background:
+  linear-gradient(45deg,transparent 45%,var(--ink) 45% 55%,transparent 55%),
+  linear-gradient(-45deg,transparent 45%,var(--ink) 45% 55%,transparent 55%),var(--paper2)}
+.a .split{grid-column:2/-1;display:none;align-items:center;gap:12px}
+.a .voted .split{display:flex}
+.a .track{flex:1;height:12px;border:1.5px solid var(--ink);background:repeating-linear-gradient(45deg,var(--ink) 0 1.5px,transparent 1.5px 6px)}
+.a .fill{display:block;height:100%;background:var(--ink);border-right:2px solid var(--paper2)}
+.a .cap{font-size:15.5px;font-style:italic;white-space:nowrap}
+.a .tear{border-top:2px dashed var(--ink);margin-top:4px;padding:16px 20px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.a .tear span{font-size:16px;font-style:italic}
+.a .tear button{font:800 24px/1 'Sofia Sans Extra Condensed',sans-serif;text-transform:uppercase;letter-spacing:.03em;background:var(--ink);color:var(--paper2);border:0;padding:13px 20px 11px;cursor:pointer}
+
+.a .back{margin-top:84px;border-top:10px solid var(--ink);padding-top:18px}
+.a .back h2{font:900 clamp(48px,6.4vw,88px)/.9 'Sofia Sans Extra Condensed',sans-serif;text-transform:uppercase;margin:0}
+.a .sum{font-size:20px;line-height:1.45;max-width:34em;margin:12px 0 30px}
+.a .sum a{color:inherit}
+.a .args{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));list-style:none;padding:0;margin:0;border-top:2px solid var(--ink);counter-reset:r}
+.a .args li{padding:20px 26px 26px;border-left:1.5px solid var(--ink)}
+.a .args li:first-child{padding-left:0;border-left:0}
+.a .args h3{font:800 36px/.98 'Sofia Sans Extra Condensed',sans-serif;text-transform:uppercase;margin:0 0 12px}
+.a .args h3::before{counter-increment:r;content:counter(r) ". "}
+.a .args p{font-size:18.5px;line-height:1.45;margin:0 0 14px}
+.a .args .who{font-size:16.5px;font-style:italic;margin:0}
+.a .args .who b{font-style:normal}
+.a .house{margin-top:8px;background:var(--ink);color:var(--paper2);padding:28px 34px 30px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:36px}
+.a .house h3{font:800 44px/.92 'Sofia Sans Extra Condensed',sans-serif;text-transform:uppercase;margin:0 0 8px}
+.a .house .to{font-size:16.5px;font-style:italic;margin:0}
+.a .house .txt{font-size:21px;line-height:1.5;margin:0;max-width:34em}
+.a .say{margin-top:56px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:36px;padding:0 34px}
+.a .say h3{font:800 44px/.92 'Sofia Sans Extra Condensed',sans-serif;text-transform:uppercase;margin:0}
+.a .say textarea{width:100%;min-height:110px;font:inherit;font-size:19px;color:inherit;background:var(--paper2);border:2px solid var(--ink);padding:14px 16px;resize:vertical;border-radius:0}
+.a .say textarea::placeholder{color:var(--ink);opacity:.6}
+.a .say .row{display:flex;align-items:center;gap:20px;margin-top:14px;flex-wrap:wrap}
+.a .say button{font:800 22px/1 'Sofia Sans Extra Condensed',sans-serif;text-transform:uppercase;letter-spacing:.03em;background:var(--ink);color:var(--paper2);border:0;padding:12px 18px 10px;cursor:pointer}
+.a .say small{font-size:16px;font-style:italic}
+
+/* =====================================================
+   LOOK B — Kafeneio (green enamel, paper placemat, menu board)
+   ===================================================== */
+.b{--green:#12402F;--deep:#0B2C20;--cream:#F4ECD8;--mustard:#E8AE2D;--dim:rgba(244,236,216,.76);--rule:rgba(244,236,216,.2);--inkc:#1B2A22;background:var(--green);color:var(--cream);font-family:'Karla',system-ui,sans-serif;min-height:100vh;padding-bottom:96px}
+.b .wrap{max-width:1200px;margin:0 auto;padding:0 32px}
+.b .top{display:flex;justify-content:space-between;align-items:center;gap:24px;padding:22px 0;border-bottom:1px solid var(--rule)}
+.b .name{font:400 30px/1 'Yeseva One',serif}
+.b .top nav{display:flex;gap:30px;font-size:17px;color:var(--dim)}
+.b .hero{padding:60px 0 46px}
+.b .when{margin:0;font-size:18px;color:var(--mustard)}
+.b h1{font:400 clamp(44px,6.3vw,90px)/1.03 'Yeseva One',serif;margin:14px 0 24px;max-width:13.5em;text-wrap:balance}
+.b .stand{font-size:23px;line-height:1.45;color:var(--dim);margin:0 0 20px;max-width:34em}
+.b .by{font-size:17px;color:var(--dim);margin:0}
+.b .by b{color:var(--cream);font-weight:700}
+.b .cols{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:44px;align-items:start}
+.b .sheet{background:var(--cream);color:var(--inkc);border-radius:4px;overflow:hidden}
+.b .sheet::before{content:"";display:block;height:16px;background:
+  linear-gradient(90deg,rgba(18,64,47,.55) 50%,transparent 50%) 0 0/16px 16px,
+  linear-gradient(rgba(18,64,47,.55) 50%,transparent 50%) 0 0/16px 16px}
+.b .sheet .in{padding:38px 48px 44px}
+.b .sheet p{font-size:19.5px;line-height:1.65;margin:0 0 20px;max-width:34em}
+.b .chart{margin-top:34px;padding-top:26px;border-top:1px solid rgba(27,42,34,.25)}
+.b .chart h3{font:400 25px/1.15 'Yeseva One',serif;margin:0}
+.b .chart .sub{margin:4px 0 0;font-size:16.5px;opacity:.8}
+.b .chart .seg{gap:6px}
+.b .chart .seg button{font-size:15.5px;font-weight:500;padding:7px 14px;border-radius:999px;border:1.5px solid var(--green);background:none;color:var(--green)}
+.b .chart .seg button[aria-pressed=true]{background:var(--green);color:var(--cream)}
+.b .chart .bar{background:var(--green)}
+.b .sheet .chart .note{font-size:14.5px;line-height:1.4;margin:10px 0 0}
+.b .sheet .chart .sub{font-size:16.5px;line-height:1.4;margin:4px 0 14px}
+
+.b .board{background:var(--deep);border:1px solid var(--rule);border-radius:14px;padding:28px 28px 26px;position:sticky;top:76px}
+.b .board h2{font:400 31px/1.1 'Yeseva One',serif;margin:0 0 8px}
+.b .how{color:var(--dim);margin:0 0 18px;font-size:17px;line-height:1.45}
+.b .menu{list-style:none;margin:0;padding:0}
+.b .menu li{padding:16px 0 17px;border-top:1px solid var(--rule)}
+.b .line{display:flex;align-items:flex-end;gap:10px}
+.b .line .q{font-size:18.5px;line-height:1.3;font-weight:500;max-width:15.5em}
+.b .dots{flex:1;min-width:20px;border-bottom:2px dotted rgba(244,236,216,.5);transform:translateY(-6px)}
+.b .pct{font:400 23px/1 'Yeseva One',serif;color:var(--mustard);white-space:nowrap}
+.b .pct small{font:400 15px 'Karla',sans-serif;color:var(--dim);margin-left:5px}
+.b .act{display:flex;align-items:center;gap:8px;margin-top:11px;flex-wrap:wrap}
+.b .vote{font-size:15.5px;font-weight:500;padding:6px 15px;border-radius:999px;border:1.5px solid rgba(244,236,216,.55);background:none;color:var(--cream);cursor:pointer}
+.b .vote[aria-pressed=true]{background:var(--mustard);border-color:var(--mustard);color:var(--deep);font-weight:700}
+.b .you{font-size:15.5px;color:var(--dim);margin-left:6px}
+.b .board .go{margin-top:8px;width:100%;font-size:17px;font-weight:700;padding:13px;border-radius:999px;border:0;background:var(--cream);color:var(--deep);cursor:pointer}
+
+.b .tables{margin-top:84px}
+.b .tables h2{font:400 clamp(40px,4.8vw,64px)/1.05 'Yeseva One',serif;margin:0}
+.b .sum{font-size:20px;line-height:1.5;color:var(--dim);max-width:36em;margin:12px 0 26px}
+.b .sum a{color:var(--cream)}
+.b .args{list-style:none;margin:0;padding:0;counter-reset:r}
+.b .args>li{display:grid;grid-template-columns:64px minmax(0,1fr) 220px;gap:8px 28px;padding:26px 0;border-top:1px solid var(--rule)}
+.b .args>li::before{counter-increment:r;content:counter(r);font:400 46px/1 'Yeseva One',serif;color:var(--mustard)}
+.b .args h3{font:400 27px/1.15 'Yeseva One',serif;margin:2px 0 8px}
+.b .args p{font-size:18.5px;line-height:1.5;color:var(--dim);margin:0;max-width:33em}
+.b .side{font-size:16px;color:var(--dim);line-height:1.4;padding-top:6px}
+.b .side b{display:block;color:var(--cream);font-size:18px}
+.b .house{grid-column:2/-1;margin-top:14px;background:var(--cream);color:var(--inkc);border-radius:4px;padding:22px 26px 24px}
+.b .house h4{font:400 21px/1.1 'Yeseva One',serif;margin:0 0 8px;color:var(--green)}
+.b .house p{color:var(--inkc);font-size:18.5px;line-height:1.55}
+.b .say{margin-top:20px;border-top:1px solid var(--rule);padding-top:36px;display:grid;grid-template-columns:64px minmax(0,1fr);gap:0 28px}
+.b .say>div{grid-column:2;max-width:760px}
+.b .say h3{font:400 31px/1.1 'Yeseva One',serif;margin:0 0 14px}
+.b .say textarea{width:100%;min-height:110px;font:inherit;font-size:18px;color:var(--cream);background:var(--deep);border:1px solid rgba(244,236,216,.4);border-radius:10px;padding:14px 16px;resize:vertical}
+.b .say textarea::placeholder{color:var(--dim)}
+.b .say .row{display:flex;align-items:center;gap:18px;margin-top:14px;flex-wrap:wrap}
+.b .say button{font-size:17px;font-weight:700;padding:12px 22px;border-radius:999px;border:0;background:var(--mustard);color:var(--deep);cursor:pointer}
+.b .say small{font-size:15.5px;color:var(--dim)}
+
+/* =====================================================
+   LOOK C — Tactics board (clean, app-like, numbers forward)
+   ===================================================== */
+.c{--bg:#EDF0F6;--surface:#fff;--ink:#0B1B3F;--muted:#55617B;--cobalt:#2145F5;--orange:#E8641B;--line:#D3D9E6;--tint:#E4E9FE;background:var(--bg);color:var(--ink);font-family:'Schibsted Grotesk',system-ui,sans-serif;min-height:100vh;padding-bottom:96px}
+.c .wrap{max-width:1340px;margin:0 auto;padding:0 32px}
+.c .bar-top{background:var(--surface);border-bottom:1px solid var(--line)}
+.c .bar-top .wrap{display:flex;align-items:center;gap:36px;height:64px}
+.c .name{font-weight:800;font-size:22px;letter-spacing:-.02em;display:flex;align-items:center;gap:10px}
+.c .name::before{content:"";width:20px;height:20px;border:2.5px solid var(--cobalt);border-radius:50%;background:radial-gradient(circle,var(--cobalt) 0 3px,transparent 3.5px)}
+.c .bar-top nav{display:flex;gap:26px;font-size:15.5px;font-weight:500;color:var(--muted)}
+.c .signin{margin-left:auto;font-size:15px;font-weight:600;padding:9px 16px;border-radius:8px;border:1px solid var(--line);background:var(--surface);cursor:pointer}
+.c .grid{display:grid;grid-template-columns:230px minmax(0,1fr) 350px;gap:52px;padding-top:46px;align-items:start}
+.c .rail{position:sticky;top:84px}
+.c .rail h2,.c .crowd h2{font-size:15px;font-weight:700;margin:0 0 4px}
+.c .prog{display:flex;gap:4px;margin:12px 0 6px}
+.c .prog i{flex:1;height:5px;border-radius:3px;background:var(--line)}
+.c .prog i.on{background:var(--cobalt)}
+.c .rail .count{font-size:14px;color:var(--muted);margin:0 0 14px}
+.c .list{list-style:none;margin:0;padding:0;counter-reset:c}
+.c .list li{display:grid;grid-template-columns:22px 1fr;gap:2px 8px;padding:12px 0;border-top:1px solid var(--line);font-size:14.5px;line-height:1.35}
+.c .list li::before{counter-increment:c;content:counter(c);font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.c .list .s{grid-column:2;font-size:13.5px;color:var(--muted)}
+.c .list .done .s{color:var(--cobalt);font-weight:600}
+.c .meta{display:flex;gap:18px;font-size:15px;color:var(--muted);margin:0 0 16px}
+.c .meta b{color:var(--cobalt);font-weight:600}
+.c h1{font-size:clamp(38px,4.3vw,60px);line-height:1.03;font-weight:800;letter-spacing:-.035em;margin:0 0 20px;text-wrap:balance}
+.c .stand{font-size:22px;line-height:1.42;color:var(--muted);margin:0 0 22px;max-width:31em}
+.c .by{display:flex;align-items:center;gap:12px;font-size:15.5px;color:var(--muted);margin:0 0 34px;padding-bottom:26px;border-bottom:1px solid var(--line)}
+.c .by i{width:36px;height:36px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-style:normal;font-weight:700;font-size:14px}
+.c .by b{color:var(--ink);font-weight:600}
+.c .body p{font-size:19px;line-height:1.66;margin:0 0 20px;max-width:34em}
+.c .claim{background:var(--tint);border-radius:14px;padding:26px 28px 24px;margin:32px 0}
+.c .claim .k{font-size:14.5px;font-weight:600;color:var(--cobalt);margin:0 0 6px}
+.c .claim .q{font-size:26px;line-height:1.2;font-weight:700;letter-spacing:-.02em;margin:0 0 18px}
+.c .claim .act{display:flex;gap:8px;align-items:center}
+.c .vote{font-size:15.5px;font-weight:600;padding:10px 20px;border-radius:9px;border:1.5px solid var(--ink);background:var(--surface);cursor:pointer}
+.c .vote[aria-pressed=true]{background:var(--ink);color:#fff}
+.c .votes{margin-left:auto;font-size:14.5px;color:var(--muted)}
+.c .split{display:none;margin-top:20px}
+.c .voted .split{display:block}
+.c .track{display:flex;gap:2px;height:12px}
+.c .track span{display:block;height:100%}
+.c .track .yes{background:var(--cobalt);border-radius:4px 0 0 4px}
+.c .track .no{background:var(--orange);border-radius:0 4px 4px 0;flex:1}
+.c .legend{display:flex;justify-content:space-between;margin-top:8px;font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
+.c .legend span{display:flex;align-items:center;gap:7px}
+.c .legend span::before{content:"";width:10px;height:10px;border-radius:3px;background:var(--cobalt)}
+.c .legend span:last-child::before{background:var(--orange)}
+.c .chart{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px 26px 20px;margin-top:32px}
+.c .chart h3{font-size:19px;font-weight:700;letter-spacing:-.01em;margin:0}
+.c .chart .sub{margin:3px 0 0;font-size:15px;color:var(--muted)}
+.c .chart .seg{background:var(--bg);border-radius:9px;padding:3px;gap:2px}
+.c .chart .seg button{font-size:14.5px;font-weight:600;padding:7px 13px;border-radius:7px;border:0;background:none;color:var(--muted)}
+.c .chart .seg button[aria-pressed=true]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(11,27,63,.18)}
+.c .chart .bar{background:var(--cobalt)}
+.c .chart .lab,.c .chart .note{color:var(--muted)}
+.c .crowd{position:sticky;top:84px}
+.c .crowd .sum{font-size:14.5px;line-height:1.45;color:var(--muted);margin:0 0 14px}
+.c .crowd .sum a{color:var(--cobalt);font-weight:600;text-decoration:none}
+.c .args{list-style:none;margin:0;padding:0;counter-reset:r}
+.c .args>li{padding:16px 0 18px;border-top:1px solid var(--line)}
+.c .args h3{font-size:17px;font-weight:700;letter-spacing:-.01em;margin:0 0 5px}
+.c .args h3::before{counter-increment:r;content:counter(r) ". ";color:var(--muted)}
+.c .args p{font-size:15px;line-height:1.5;color:var(--muted);margin:0}
+.c .support{display:flex;align-items:center;gap:10px;margin:11px 0 4px;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums}
+.c .sbar{flex:1;height:6px;border-radius:3px;background:var(--line)}
+.c .sbar span{display:block;height:100%;border-radius:3px;background:var(--cobalt)}
+.c .args .who{font-size:13.5px}
+.c .house{margin-top:14px;padding:14px 16px 15px;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.c .house h4{font-size:14px;font-weight:700;margin:0 0 5px;color:var(--cobalt)}
+.c .house p{color:var(--ink);font-size:15px}
+.c .say{margin-top:6px;padding-top:18px;border-top:1px solid var(--line)}
+.c .say textarea{width:100%;min-height:84px;font:inherit;font-size:15px;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;resize:vertical}
+.c .say .row{display:flex;align-items:center;gap:12px;margin-top:10px}
+.c .say button{font-size:15px;font-weight:600;padding:10px 16px;border-radius:9px;border:0;background:var(--cobalt);color:#fff;cursor:pointer;white-space:nowrap}
+.c .say small{font-size:13px;line-height:1.35;color:var(--muted)}
+
+/* ---------- small screens ---------- */
+@media (max-width:980px){
+  .a .cols,.b .cols,.c .grid{grid-template-columns:minmax(0,1fr);gap:36px}
+  .a .coupon,.b .board,.c .rail,.c .crowd{position:static}
+  .a .args{grid-template-columns:minmax(0,1fr)}
+  .a .args li,.a .args li:first-child{padding:20px 0;border-left:0;border-top:1.5px solid var(--ink)}
+  .a .house,.a .say{grid-template-columns:minmax(0,1fr);gap:16px}
+  .a .say{padding:0}
+  .a .mast nav,.b .top nav,.c .bar-top nav{display:none}
+  .b .args>li{grid-template-columns:44px minmax(0,1fr)}
+  .b .side,.b .house{grid-column:2}
+  .b .sheet .in{padding:28px 24px 32px}
+  .a .wrap,.b .wrap,.c .wrap{padding:0 18px}
+}
+</style>
+</head>
+<body>
+
+<div class="picker">
+  <p>Three looks, same article. Click around, then choose.</p>
+  <div role="tablist" style="display:flex;gap:8px;flex-wrap:wrap">
+    <button role="tab" data-look="a" aria-selected="true">A. Pink paper</button>
+    <button role="tab" data-look="b" aria-selected="false">B. Kafeneio</button>
+    <button role="tab" data-look="c" aria-selected="false">C. Tactics board</button>
+  </div>
+  <span class="done" hidden></span>
+  <button class="choose" data-choice="a">Choose Pink paper</button>
+</div>
+
+<!-- ============================ LOOK A ============================ -->
+<section class="look a" id="look-a">
+  <div class="mast"><div class="wrap">
+    <div class="name">Football Cafe</div>
+    <nav><span>Today's piece</span><span>Past rounds</span><span>House rules</span><span>Sign in</span></nav>
+  </div></div>
+  <div class="wrap">
+    <div class="dateline"><span>Friday 2 October 2026</span><span>Read it, tick your coupon, argue back</span></div>
+    <h1>The No. 10 never died. Coaches just stopped trusting him.</h1>
+    <div class="cols">
+      <article>
+        <p class="stand">Everyone blames the press for killing the playmaker. The truth is simpler, and less flattering for the men on the touchline.</p>
+        <p class="by"><span>Written by the house. Eight minutes.</span><span class="stamp">Round 2 open</span></p>
+        <div class="body">
+          <p>Ask anyone why the classic playmaker vanished and you will hear the same answer: the press ate him. No space between the lines, no time on the ball, no room for a man who walks.</p>
+          <p>I don't buy it. Space still opens up, every single match. What changed is who is allowed to stand in it. A coach who picks a 10 is betting on one player's ideas. A coach who picks a third runner is buying insurance. Most of them buy insurance.</p>
+        </div>
+        <figure class="chart"></figure>
+      </article>
+      <aside class="coupon">
+        <header><h2>Your coupon</h2><span class="serial">No. 001284</span></header>
+        <p class="how">Five claims hold this piece up. Tick a box on each one and see where the cafe stands.</p>
+        <ol class="rows" data-claims="a"></ol>
+        <div class="tear"><span>1 of 5 ticked</span><button>Hand in my coupon</button></div>
+      </aside>
+    </div>
+
+    <section class="back">
+      <h2>The cafe answers back</h2>
+      <p class="sum">212 readers replied to claim 1. These are the three arguments they make most, summed up by our note-taker. <a href="#">Read all 212 replies</a></p>
+      <ol class="args" data-args="a"></ol>
+      <div class="house">
+        <div><h3>The house replies</h3><p class="to">to “The space is gone, not the trust.”</p></div>
+        <p class="txt" data-house></p>
+      </div>
+      <div class="say">
+        <h3>Your turn</h3>
+        <div>
+          <textarea placeholder="Tell the house where it's wrong."></textarea>
+          <div class="row"><button>Post as guest</button><small>A moderator reads every reply before it goes up. Only your nickname is shown.</small></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</section>
+
+<!-- ============================ LOOK B ============================ -->
+<section class="look b" id="look-b" hidden>
+  <div class="wrap">
+    <div class="top">
+      <div class="name">Football Cafe</div>
+      <nav><span>Today's piece</span><span>Past rounds</span><span>House rules</span><span>Sign in</span></nav>
+    </div>
+    <div class="hero">
+      <p class="when">Today's piece, Friday 2 October</p>
+      <h1>The No. 10 never died. Coaches just stopped trusting him.</h1>
+      <p class="stand">Everyone blames the press for killing the playmaker. The truth is simpler, and less flattering for the men on the touchline.</p>
+      <p class="by">Written by <b>the house</b>. Eight minutes. Round 2 is open.</p>
+    </div>
+    <div class="cols">
+      <article class="sheet"><div class="in">
+        <p>Ask anyone why the classic playmaker vanished and you will hear the same answer: the press ate him. No space between the lines, no time on the ball, no room for a man who walks.</p>
+        <p>I don't buy it. Space still opens up, every single match. What changed is who is allowed to stand in it. A coach who picks a 10 is betting on one player's ideas. A coach who picks a third runner is buying insurance. Most of them buy insurance.</p>
+        <figure class="chart"></figure>
+      </div></article>
+      <aside class="board">
+        <h2>On the board today</h2>
+        <p class="how">Five claims hold this piece up. Say where you stand on each one.</p>
+        <ol class="menu" data-claims="b"></ol>
+        <button class="go">See how I compare</button>
+      </aside>
+    </div>
+
+    <section class="tables">
+      <h2>From the tables</h2>
+      <p class="sum">212 readers replied to claim 1. These are the three arguments they make most, summed up by our note-taker. <a href="#">Read all 212 replies</a></p>
+      <ol class="args" data-args="b"></ol>
+      <div class="say"><div>
+        <h3>Pull up a chair</h3>
+        <textarea placeholder="Tell the house where it's wrong."></textarea>
+        <div class="row"><button>Post as guest</button><small>A moderator reads every reply before it goes up. Only your nickname is shown.</small></div>
+      </div></div>
+    </section>
+  </div>
+</section>
+
+<!-- ============================ LOOK C ============================ -->
+<section class="look c" id="look-c" hidden>
+  <div class="bar-top"><div class="wrap">
+    <div class="name">football cafe</div>
+    <nav><span>Today's piece</span><span>Past rounds</span><span>House rules</span></nav>
+    <button class="signin">Sign in</button>
+  </div></div>
+  <div class="wrap"><div class="grid">
+    <aside class="rail">
+      <h2>Claims in this piece</h2>
+      <div class="prog"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+      <p class="count">1 of 5 answered</p>
+      <ol class="list" data-claims="c"></ol>
+    </aside>
+    <article>
+      <p class="meta"><b>Round 2 is open</b><span>2 October 2026</span><span>8 min read</span></p>
+      <h1>The No. 10 never died. Coaches just stopped trusting him.</h1>
+      <p class="stand">Everyone blames the press for killing the playmaker. The truth is simpler, and less flattering for the men on the touchline.</p>
+      <p class="by"><i>FC</i><span>Written by <b>the house</b></span></p>
+      <div class="body">
+        <p>Ask anyone why the classic playmaker vanished and you will hear the same answer: the press ate him. No space between the lines, no time on the ball, no room for a man who walks.</p>
+        <div class="claim voted" data-claim>
+          <p class="k">Claim 1 of 5</p>
+          <p class="q">Pressing didn't kill the No. 10. Cautious coaching did.</p>
+          <div class="act">
+            <button class="vote" data-v="agree" aria-pressed="true">Agree</button>
+            <button class="vote" data-v="disagree" aria-pressed="false">Disagree</button>
+            <span class="votes">1,284 votes</span>
+          </div>
+          <div class="split">
+            <div class="track"><span class="yes" style="width:62%"></span><span class="no"></span></div>
+            <div class="legend"><span>62% agree</span><span>38% disagree</span></div>
+          </div>
+        </div>
+        <p>I don't buy it. Space still opens up, every single match. What changed is who is allowed to stand in it. A coach who picks a 10 is betting on one player's ideas. A coach who picks a third runner is buying insurance. Most of them buy insurance.</p>
+      </div>
+      <figure class="chart"></figure>
+    </article>
+    <aside class="crowd">
+      <h2>The crowd's case against claim 1</h2>
+      <p class="sum">212 replies, summed up into the three arguments readers make most. <a href="#">Read all 212</a></p>
+      <ol class="args" data-args="c"></ol>
+      <div class="say">
+        <textarea placeholder="Tell the house where it's wrong."></textarea>
+        <div class="row"><button>Post as guest</button><small>A moderator reads every reply first. Only your nickname is shown.</small></div>
+      </div>
+    </aside>
+  </div></div>
+</section>
+
+<script>
+const LOOKS={a:'Pink paper',b:'Kafeneio',c:'Tactics board'};
+const CLAIMS=[
+  {q:"Pressing didn't kill the No. 10. Cautious coaching did.",p:62,mine:'agree'},
+  {q:"A great 10 is worth one lost duel in midfield.",p:48},
+  {q:"Academies coach the risk out of creative kids.",p:81},
+  {q:"The false nine was a 10 in disguise.",p:57},
+  {q:"The next great team will be built around one.",p:39}
+];
+const ARGS=[
+  {t:"The space is gone, not the trust.",d:"Teams now defend in a block barely 25 metres deep. Between the lines there is nowhere left for a 10 to stand still.",n:84,who:"kopite_nikos"},
+  {t:"He didn't die, he moved.",d:"The playmaker now starts as an 8 or drifts in from the wing. Same brain, different postcode.",n:61,who:"Marta, a guest"},
+  {t:"One passenger costs you the midfield.",d:"Pick a 10 who doesn't run and you are two against three in the middle every time the ball is lost.",n:37,who:"dimi_7"}
+];
+const HOUSE="Fair, the block is tighter than it used to be. But tight isn't closed. The gap opens for a second after every switch of play, and somebody has to be standing there who wants the ball. That is a choice of player, and coaches make it.";
+const DATA={England:[31,29,27,26,24,23],Spain:[34,33,31,30,29,27],Italy:[30,30,28,27,27,25]};
+const SEASONS=['20–21','21–22','22–23','23–24','24–25','25–26'];
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const pressed=(c,v)=>c.mine===v?'true':'false';
+
+/* claims */
+$('[data-claims=a]').innerHTML=CLAIMS.map(c=>`<li data-claim class="${c.mine?'voted':''}">
+  <span class="q">${c.q}</span>
+  <span class="boxes"><button class="vote" data-v="agree" aria-pressed="${pressed(c,'agree')}"><i></i>Agree</button><button class="vote" data-v="disagree" aria-pressed="false"><i></i>Disagree</button></span>
+  <span class="split"><span class="track"><span class="fill" style="width:${c.p}%"></span></span><span class="cap">${c.p}% of the cafe agrees</span></span></li>`).join('');
+$('[data-claims=b]').innerHTML=CLAIMS.map(c=>`<li data-claim data-p="${c.p}">
+  <div class="line"><span class="q">${c.q}</span><span class="dots"></span><span class="pct">${c.p}%<small>agree</small></span></div>
+  <div class="act"><button class="vote" data-v="agree" aria-pressed="${pressed(c,'agree')}">Agree</button><button class="vote" data-v="disagree" aria-pressed="false">Disagree</button><span class="you">${c.mine?`You're with the ${c.p}%.`:''}</span></div></li>`).join('');
+$('[data-claims=c]').innerHTML=CLAIMS.map(c=>`<li class="${c.mine?'done':''}"><span>${c.q}</span><span class="s">${c.mine?'You agreed, with 62%':'Not answered yet'}</span></li>`).join('');
+
+/* arguments */
+$('[data-args=a]').innerHTML=ARGS.map(a=>`<li><h3>${a.t}</h3><p>${a.d}</p><p class="who"><b>${a.n} readers</b> back this. First raised by ${a.who}.</p></li>`).join('');
+$('[data-args=b]').innerHTML=ARGS.map((a,i)=>`<li><div><h3>${a.t}</h3><p>${a.d}</p></div><div class="side"><b>${a.n} readers back this</b>First raised by ${a.who}</div>${i?'':`<div class="house"><h4>From behind the counter</h4><p>${HOUSE}</p></div>`}</li>`).join('');
+$('[data-args=c]').innerHTML=ARGS.map((a,i)=>`<li><h3>${a.t}</h3><p>${a.d}</p><div class="support"><span class="sbar"><span style="width:${Math.round(a.n/84*100)}%"></span></span>${a.n} readers</div><p class="who">First raised by ${a.who}</p>${i?'':`<div class="house"><h4>The house replied</h4><p>${HOUSE}</p></div>`}</li>`).join('');
+$('[data-house]').textContent=HOUSE;
+
+/* charts */
+$$('.chart').forEach(f=>{
+  f.innerHTML=`<div class="head"><figcaption><h3>Chances created through the middle</h3><p class="sub">Share of all chances, season by season</p></figcaption>
+    <div class="seg" role="group" aria-label="League">${Object.keys(DATA).map((k,i)=>`<button aria-pressed="${!i}" data-league="${k}">${k}</button>`).join('')}</div></div>
+    <div class="bars">${SEASONS.map((s,i)=>`<div class="col ${i===0||i===SEASONS.length-1?'show':''}"><span class="val"></span><span class="bar"></span><span class="lab">${s}</span></div>`).join('')}</div>
+    <p class="note">Sample numbers, for this mockup only. Hover a bar to read it.</p>`;
+  const draw=k=>$$('.col',f).forEach((c,i)=>{const v=DATA[k][i];$('.val',c).textContent=v+'%';$('.bar',c).style.height=(v/40*160)+'px';});
+  draw('England');
+  $$('.seg button',f).forEach(b=>b.onclick=()=>{$$('.seg button',f).forEach(x=>x.setAttribute('aria-pressed',x===b));draw(b.dataset.league);});
+});
+
+/* voting */
+document.addEventListener('click',e=>{
+  const b=e.target.closest('.vote'); if(!b) return;
+  const row=b.closest('[data-claim]');
+  $$('.vote',row).forEach(x=>x.setAttribute('aria-pressed',x===b));
+  row.classList.add('voted');
+  const you=$('.you',row);
+  if(you){const p=+row.dataset.p;you.textContent=`You're with the ${b.dataset.v==='agree'?p:100-p}%.`;}
+});
+
+/* picker */
+const choose=$('.choose'), done=$('.done');
+function show(k,keep){
+  if(!LOOKS[k]) k='a';
+  $$('.look').forEach(s=>s.hidden=s.id!=='look-'+k);
+  $$('[role=tab]').forEach(t=>t.setAttribute('aria-selected',t.dataset.look===k));
+  choose.dataset.choice=k; choose.textContent='Choose '+LOOKS[k];
+  if(!keep){history.replaceState(null,'','#'+k);window.scrollTo(0,0);}
+}
+$$('[role=tab]').forEach(t=>t.onclick=()=>show(t.dataset.look));
+choose.addEventListener('click',()=>{done.hidden=false;done.textContent='Chosen: '+LOOKS[choose.dataset.choice]+'. Now tell Claude in the terminal.';});
+show(location.hash.slice(1)||'a',true);
+</script>
+</body>
+</html>

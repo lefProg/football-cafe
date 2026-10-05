@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Past rounds | Football Cafe{% endblock %}
+{% block content %}
+<div class="page">
+  <h1 class="page-title">Past rounds</h1>
+  <p class="lede">Every piece the house has put on the table, newest first. The arguments stay open.</p>
+  {% if pieces %}
+  <ol class="pieces">
+    {% for piece in pieces %}
+    <li>
+      <span class="when">{{ piece.published_at|date:"j F Y" }}</span>
+      <div>
+        <h2><a href="{{ piece.get_absolute_url }}">{{ piece.title }}</a></h2>
+        <p>{{ piece.standfirst }}</p>
+        <p class="count">{% if piece.reply_count %}{{ piece.reply_count }} repl{{ piece.reply_count|pluralize:"y,ies" }} so far{% else %}No replies yet{% endif %}</p>
+      </div>
+    </li>
+    {% endfor %}
+  </ol>
+  {% else %}
+  <p class="lede">Nothing here yet. The first piece is on its way.</p>
+  {% endif %}
+</div>
+{% endblock %}

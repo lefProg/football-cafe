@@ -1,0 +1,31 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Football Cafe{% endblock %}</title>
+<meta name="description" content="{% block description %}Football opinion you can argue with. Read the piece, tick your coupon, tell the house where it is wrong.{% endblock %}">
+<link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
+<link rel="preload" href="{% static 'fonts/sofia-sans-extra-condensed-normal-latin.woff2' %}" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="{% static 'css/fonts.css' %}">
+<link rel="stylesheet" href="{% static 'css/site.css' %}">
+</head>
+<body>
+<header class="mast"><div class="wrap">
+  <a class="name" href="{% url 'home' %}">Football Cafe</a>
+  <nav aria-label="Main">
+    <a href="{% url 'home' %}"{% if nav == "home" %} aria-current="page"{% endif %}>Today's piece</a>
+    <a href="{% url 'past_rounds' %}"{% if nav == "past" %} aria-current="page"{% endif %}>Past rounds</a>
+    <a href="{% url 'house_rules' %}"{% if nav == "rules" %} aria-current="page"{% endif %}>House rules</a>
+  </nav>
+</div></header>
+<main class="wrap">
+{% block content %}{% endblock %}
+</main>
+<footer class="wrap"><div class="foot">
+  <span>Football Cafe. One writer, one piece, everyone's argument.</span>
+  <a href="{% url 'house_rules' %}">How replies are checked</a>
+</div></footer>
+<script src="{% static 'js/site.js' %}" defer></script>
+</body>
+</html>

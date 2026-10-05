@@ -1,0 +1,53 @@
+# The server setup: gunicorn, debug off, no source code mounted, restarts by itself.
+#
+#     python3 scripts/make_env.py --ip <server ip> --port <public port>   # once, writes .env
+#     docker compose -f compose-deployment.yml up -d --build
+#
+# Unlike compose.yml it has no defaults for secrets: it refuses to start without a .env.
+services:
+  db:
+    image: postgres:17
+    restart: always
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME:?Run scripts/make_env.py first}
+      POSTGRES_USER: ${DATABASE_USERNAME:?Run scripts/make_env.py first}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:?Run scripts/make_env.py first}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME} -d ${DATABASE_NAME}"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  footballcafe:
+    build: .
+    restart: always
+    container_name: football-cafe-backend
+    ports:
+      - "${WEB_PORT:?Run scripts/make_env.py first}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DEV: "false"
+      DEBUG: "False"
+      HTTPS: ${HTTPS:-False}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?Run scripts/make_env.py first}
+      DJANGO_LOGLEVEL: ${DJANGO_LOGLEVEL:-info}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:?Run scripts/make_env.py first}
+      DJANGO_CSRF_TRUSTED_ORIGINS: ${DJANGO_CSRF_TRUSTED_ORIGINS:?Run scripts/make_env.py first}
+      DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME:-house}
+      DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD:?Run scripts/make_env.py first}
+      DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL:-house@example.com}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      CAFE_MODERATOR_MODEL: ${CAFE_MODERATOR_MODEL:-claude-haiku-4-5}
+      CAFE_NOTETAKER_MODEL: ${CAFE_NOTETAKER_MODEL:-claude-haiku-4-5}
+
+volumes:
+  postgres_data:

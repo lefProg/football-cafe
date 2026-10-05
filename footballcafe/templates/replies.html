@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Replies to {{ article.title }} | Football Cafe{% endblock %}
+{% block content %}
+<div class="page">
+  {% if argument %}
+  <h1 class="page-title">“{{ argument.title }}”</h1>
+  <p class="lede">The {{ reply_count }} repl{{ reply_count|pluralize:"y,ies" }} behind this argument, exactly as readers wrote {{ reply_count|pluralize:"it,them" }}. <a href="{% url 'replies' article.slug %}">See every reply</a></p>
+  {% else %}
+  <h1 class="page-title">{{ reply_count }} repl{{ reply_count|pluralize:"y,ies" }}</h1>
+  <p class="lede">What readers said back to “{{ article.title }}”, oldest first.</p>
+  {% endif %}
+  {% if replies %}
+  <ol class="letters">
+    {% for reply in replies %}
+    <li id="reply-{{ reply.id }}">
+      <p class="who">{{ reply.nickname }}</p>
+      <p class="when">{{ reply.created_at|date:"j F Y, H:i" }}</p>
+      <p class="txt">{{ reply.text|linebreaksbr }}</p>
+    </li>
+    {% endfor %}
+  </ol>
+  {% else %}
+  <p class="lede">Nobody has argued back yet.</p>
+  {% endif %}
+  <a class="backlink" href="{{ article.get_absolute_url }}">Back to the piece</a>
+</div>
+{% endblock %}

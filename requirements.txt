@@ -1,0 +1,10 @@
+Django>=5.2,<5.3
+djangorestframework==3.16.0
+drf-spectacular==0.28.0
+drf-spectacular-sidecar==2025.6.1
+django-health-check==3.20.0
+psycopg2-binary==2.9.10
+gunicorn>=23.0.0
+whitenoise>=6.9,<7
+anthropic==1.11.0
+Markdown>=3.8,<4

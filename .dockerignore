@@ -1,0 +1,11 @@
+.git
+.env
+.venv
+venv
+.fablize
+.superpowers
+.ruff_cache
+**/__pycache__
+footballcafe/staticfiles
+design
+docs

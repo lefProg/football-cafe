@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load core_extras %}
+{% block title %}{{ article.title }} | Football Cafe{% endblock %}
+{% block description %}{{ article.standfirst }}{% endblock %}
+{% block content %}
+<div class="dateline"><span>{% if article.is_published %}{{ article.published_at|date:"l j F Y" }}{% elif article.published_at %}Goes live {{ article.published_at|date:"l j F Y, H:i" }}{% else %}Not published yet{% endif %}</span><span>Read it, tick your coupon, argue back</span></div>
+<h1 class="headline">{{ article.title }}</h1>
+
+<div class="cols">
+  <article>
+    <p class="stand">{{ article.standfirst }}</p>
+    <p class="by">
+      <span>Written by the house. {{ article.reading_minutes }} minute{{ article.reading_minutes|pluralize }}.</span>
+      <span class="stamp">{% if not article.is_published %}Draft, only you see this{% elif article.replies_open %}Round {{ article.round_number }} open{% else %}Round closed{% endif %}</span>
+    </p>
+    <div class="body">{{ article.body|markdown }}</div>
+  </article>
+
+  {% if coupon.rows %}
+  <aside class="coupon" id="coupon" data-coupon aria-labelledby="coupon-title">
+    <header><h2 id="coupon-title">Your coupon</h2><span class="serial">No. {{ article.id|stringformat:"06d" }}</span></header>
+    <p class="how">{{ coupon.total|apnumber|capfirst }} claim{{ coupon.total|pluralize }} hold{{ coupon.total|pluralize:"s," }} this piece up. Tick a box on each one and see where the cafe stands.</p>
+    <ol class="rows">
+      {% for row in coupon.rows %}
+      <li data-claim{% if row.mine is not None %} class="voted"{% endif %}>
+        <span class="q">{{ row.claim.text }}</span>
+        <form class="boxes" data-vote-url="{% url 'claim-vote' article.slug row.claim.position %}">
+          <button class="vote" value="1" aria-pressed="{{ row.agreed|yesno:'true,false' }}"><i></i>Agree</button>
+          <button class="vote" value="2" aria-pressed="{{ row.disagreed|yesno:'true,false' }}"><i></i>Disagree</button>
+        </form>
+        <span class="split">
+          <span class="track"><span class="fill" style="width:{{ row.percent|default:0 }}%"></span></span>
+          <span class="cap">{% if row.percent is not None %}{{ row.percent }}% of the cafe agrees{% endif %}</span>
+        </span>
+      </li>
+      {% endfor %}
+    </ol>
+    <div class="tear">
+      <span class="count" data-count>{{ coupon.ticked }} of {{ coupon.total }} ticked</span>
+      <button type="button" class="btn" data-hand-in hidden disabled>Hand in my coupon</button>
+      <p class="verdict" data-verdict{% if not coupon.verdict %} hidden{% endif %}><b>Your verdict</b><span>{{ coupon.verdict }}</span></p>
+      <p class="oops" data-oops role="alert" hidden>That tick did not save. Try it again.</p>
+    </div>
+  </aside>
+  {% endif %}
+</div>
+
+<section class="back" id="answers">
+  <h2>The cafe answers back</h2>
+  {% if arguments %}
+  <p class="sum">{{ reply_count }} reader{{ reply_count|pluralize }} replied. These are the arguments they make most, summed up by our note&#8209;taker. <a href="{% url 'replies' article.slug %}">Read all {{ reply_count }} repl{{ reply_count|pluralize:"y,ies" }}</a></p>
+  <ol class="args cols-{{ arguments|length }}">
+    {% for argument in arguments %}{% with backers=argument.supporter_count %}
+    <li>
+      <h3>{{ argument.title }}</h3>
+      <p>{{ argument.summary }}</p>
+      <p class="who"><b>{{ backers }} reader{{ backers|pluralize }}</b> back{{ backers|pluralize:"s," }} this{% if argument.claim %}, against claim {{ argument.claim.position }}{% endif %}. First raised by {{ argument.first_raised_by }}. <a href="{% url 'replies' article.slug %}?argument={{ argument.id }}">Read their words</a></p>
+    </li>
+    {% endwith %}{% endfor %}
+  </ol>
+  {% for argument in answered %}
+  <div class="house">
+    <div><h3>The house replies</h3><p class="to">to “{{ argument.title }}”</p></div>
+    <div class="txt">{{ argument.house_reply|linebreaks }}</div>
+  </div>
+  {% endfor %}
+  {% elif reply_count %}
+  <p class="sum">{{ reply_count }} reader{{ reply_count|pluralize }} {{ reply_count|pluralize:"has,have" }} replied. The note&#8209;taker has not summed them up yet. <a href="{% url 'replies' article.slug %}">Read the repl{{ reply_count|pluralize:"y,ies" }}</a></p>
+  {% else %}
+  <p class="sum">Nobody has argued back yet. Be the first to tell the house where it is wrong.</p>
+  {% endif %}
+
+  {% if article.replies_open %}
+  <form class="say" id="your-turn" data-reply-form data-reply-url="{% url 'piece-replies' article.slug %}">
+    <h3>Your turn</h3>
+    <div>
+      <label for="nickname">Nickname</label>
+      <input type="text" id="nickname" name="nickname" maxlength="{{ nickname_max }}" required autocomplete="nickname">
+      <label for="reply-text">Your argument</label>
+      <textarea id="reply-text" name="text" maxlength="{{ text_max }}" required placeholder="Tell the house where it's wrong."></textarea>
+      <input class="trap" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <div class="row">
+        <button class="btn">Post as guest</button>
+        <small>A moderator reads every reply before it goes up. Only your nickname is shown. <a href="{% url 'house_rules' %}">House rules</a></small>
+      </div>
+      <p class="result" data-result role="status" aria-live="polite"></p>
+    </div>
+  </form>
+  {% else %}
+  <p class="sum">Replies to this piece are closed.</p>
+  {% endif %}
+</section>
+{% endblock %}

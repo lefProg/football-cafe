@@ -1,0 +1,16 @@
+/* The piece editor in the admin: Markdown on the left, the piece as readers see it on the right. */
+.fc-editor { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; width: 100%; }
+/* The admin fixes the width of text boxes and the font of paragraphs, so both are overruled here. */
+.fc-editor textarea { width: 100% !important; max-width: none; min-width: 0; box-sizing: border-box; font-size: 15px; line-height: 1.55; }
+.fc-preview { background: #F6CBBF; color: #15234B; font-family: 'Newsreader', Georgia, serif; font-size: 19px; line-height: 1.6; padding: 22px 26px; border: 1px solid #15234B; max-height: 760px; overflow-y: auto; position: sticky; top: 12px; }
+.fc-preview p, .fc-preview li, .fc-preview blockquote { font-family: 'Newsreader', Georgia, serif; }
+.fc-preview p { margin: 0 0 18px; padding: 0; font-size: inherit; color: inherit; }
+.fc-preview h2, .fc-preview h3 { font: 800 32px/1 'Sofia Sans Extra Condensed', 'Arial Narrow', sans-serif; text-transform: uppercase; margin: 30px 0 10px; padding: 0; background: none; color: inherit; }
+.fc-preview blockquote { margin: 22px 0; padding: 0 0 0 18px; border-left: 4px solid #15234B; font-size: 22px; line-height: 1.35; font-style: italic; color: inherit; }
+.fc-preview ul, .fc-preview ol { margin: 0 0 18px; padding-left: 1.2em; }
+.fc-preview li { list-style: inherit; font-size: inherit; }
+.fc-preview a { color: inherit; text-decoration: underline; }
+.fc-preview .fc-empty { font-style: italic; opacity: .7; }
+.field-body .flex-container { display: block; }
+.field-body .help { margin-left: 0; padding-left: 0; }
+@media (max-width: 1100px) { .fc-editor { grid-template-columns: minmax(0, 1fr); } .fc-preview { position: static; } }

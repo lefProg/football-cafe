@@ -1,0 +1,52 @@
+# Local setup: `docker compose up -d --build`, then open http://localhost:8010
+# Every value has a default, so it runs without a .env file. Copy .env.example to .env to change any of them.
+services:
+  db:
+    image: postgres:17
+    ports:
+      - "127.0.0.1:${DATABASE_PUBLIC_PORT:-5440}:5432"
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME:-footballcafe}
+      POSTGRES_USER: ${DATABASE_USERNAME:-footballcafe}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-footballcafe}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME:-footballcafe} -d ${DATABASE_NAME:-footballcafe}"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  footballcafe:
+    build: .
+    container_name: football-cafe-backend
+    ports:
+      - "${WEB_PORT:-8010}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DEV: ${DEV:-true}
+      DEBUG: ${DEBUG:-True}
+      SEED_DEMO: ${SEED_DEMO:-true}
+      HTTPS: ${HTTPS:-False}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-dev-only-change-me}
+      DJANGO_LOGLEVEL: ${DJANGO_LOGLEVEL:-info}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1,0.0.0.0}
+      DJANGO_CSRF_TRUSTED_ORIGINS: ${DJANGO_CSRF_TRUSTED_ORIGINS:-http://localhost:8010,http://127.0.0.1:8010}
+      DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME:-house}
+      DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD:-footballcafe}
+      DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL:-house@example.com}
+      DATABASE_NAME: ${DATABASE_NAME:-footballcafe}
+      DATABASE_USERNAME: ${DATABASE_USERNAME:-footballcafe}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-footballcafe}
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      CAFE_MODERATOR_MODEL: ${CAFE_MODERATOR_MODEL:-claude-haiku-4-5}
+      CAFE_NOTETAKER_MODEL: ${CAFE_NOTETAKER_MODEL:-claude-haiku-4-5}
+    volumes:
+      - ./footballcafe:/app
+
+volumes:
+  postgres_data:
