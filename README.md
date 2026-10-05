@@ -121,14 +121,15 @@ Requires Docker. An Anthropic API key is optional: without it every reply waits 
 On the server, in a fresh clone of the repo:
 
 ```
-python3 scripts/make_env.py --ip <server ip> --port <public port>   # writes .env, prints your admin login
-nano .env                                                           # paste your ANTHROPIC_API_KEY
-docker compose -f compose-deployment.yml up -d --build
+python3 scripts/make_env.py --ip <server ip>     # writes .env, prints your admin login
+nano .env                                        # paste your ANTHROPIC_API_KEY
+docker compose up -d --build
 ```
 
-`compose-deployment.yml` is the server setup: gunicorn, debug off, restarts by itself, and it refuses to
-start without a `.env`. To update later: `git pull`, then the same `docker compose` line again. The
-database lives in a Docker volume and survives updates.
+The script finds a public port nobody else on the server is using and tells you the address. It also
+makes `docker compose` use `compose-deployment.yml` in that folder: gunicorn, debug off, restarts by
+itself. To update later: `git pull`, then `docker compose up -d --build` again. The database lives in a
+Docker volume and survives updates.
 
 ### With your own domain
 
@@ -136,13 +137,17 @@ Point the domain at the server first: at your registrar, add two `A` records, `@
 the server's IP. Then, on the server:
 
 ```
-ufw allow 80,443/tcp                                          # let the web in
-python3 scripts/make_env.py --domain cafe.example.com --force
-docker compose -f compose-deployment.yml up -d --build
+python3 scripts/make_env.py --domain footballcafe.gr --force
+docker compose up -d --build
 ```
 
-That adds a Caddy container in front of the site. It gets the https certificate by itself and renews
-it. `--force` keeps your passwords and keys, so the database carries on as it was.
+`--force` keeps your passwords and keys, so the database carries on as it was. What happens next depends
+on the server, and the script tells you which:
+
+- **Ports 80 and 443 are free:** a Caddy container starts in front of the site, gets the https
+  certificate by itself and renews it. Nothing else to do.
+- **Something already answers there** (Nginx Proxy Manager, for example): the cafe leaves those ports
+  alone, and the script prints the three values to enter in that program.
 
 ## Status
 
