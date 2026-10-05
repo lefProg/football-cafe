@@ -1,6 +1,7 @@
 # The server setup: gunicorn, debug off, no source code mounted, restarts by itself.
 #
 #     python3 scripts/make_env.py --ip <server ip> --port <public port>   # once, writes .env
+#     (or --domain <your domain> for https on your own domain)
 #     docker compose -f compose-deployment.yml up -d --build
 #
 # Unlike compose.yml it has no defaults for secrets: it refuses to start without a .env.
@@ -25,7 +26,7 @@ services:
     restart: always
     container_name: football-cafe-backend
     ports:
-      - "${WEB_PORT:?Run scripts/make_env.py first}:8000"
+      - "${WEB_BIND:-0.0.0.0}:${WEB_PORT:?Run scripts/make_env.py first}:8000"
     depends_on:
       db:
         condition: service_healthy
@@ -49,5 +50,24 @@ services:
       CAFE_MODERATOR_MODEL: ${CAFE_MODERATOR_MODEL:-claude-haiku-4-5}
       CAFE_NOTETAKER_MODEL: ${CAFE_NOTETAKER_MODEL:-claude-haiku-4-5}
 
+  # Only started when .env says COMPOSE_PROFILES=https, which scripts/make_env.py --domain writes.
+  caddy:
+    image: caddy:2
+    restart: always
+    profiles: ["https"]
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN:-}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - footballcafe
+
 volumes:
   postgres_data:
+  caddy_data:
+  caddy_config:

@@ -1,0 +1,10 @@
+# Caddy answers on ports 80 and 443 for your domain, gets and renews the https certificate by itself,
+# and passes every visitor on to the site. It only runs when .env has a DOMAIN (scripts/make_env.py --domain).
+{$DOMAIN} {
+	encode gzip
+	reverse_proxy footballcafe:8000
+}
+
+www.{$DOMAIN} {
+	redir https://{$DOMAIN}{uri} permanent
+}

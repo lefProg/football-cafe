@@ -21,8 +21,11 @@ class ReplyCreateTests(CafeBase):
         self.article = self.make_article()
         self.url = reverse('piece-replies', args=[self.article.slug])
 
-    def post(self, text=GOOD_REPLY, nickname='kopite_nikos', **extra):
-        return self.client.post(self.url, {'nickname': nickname, 'text': text, **extra})
+    def post(self, text=GOOD_REPLY, nickname='kopite_nikos', website=None, **headers):
+        data = {'nickname': nickname, 'text': text}
+        if website is not None:
+            data['website'] = website
+        return self.client.post(self.url, data, **headers)
 
     def listed(self):
         return [reply['text'] for reply in self.client.get(self.url).json()['results']]
@@ -104,6 +107,22 @@ class ReplyCreateTests(CafeBase):
                 self.assertEqual(self.post().status_code, 201)
             self.client.cookies.clear()
             self.assertEqual(self.post().status_code, 429)
+
+    def test_behind_the_https_proxy_the_limit_follows_the_real_visitor_not_the_proxy(self):
+        def post_from(address):
+            self.client.cookies.clear()
+            return self.post(HTTP_X_FORWARDED_FOR=f'10.9.9.9, {address}')
+
+        with override_settings(CAFE_REPLY_LIMIT_PER_IP=1, HTTPS=True), moderator_says('publish'):
+            self.assertEqual(post_from('203.0.113.5').status_code, 201)
+            self.assertEqual(post_from('203.0.113.5').status_code, 429)
+            self.assertEqual(post_from('203.0.113.77').status_code, 201)
+
+    def test_on_a_bare_port_a_typed_in_forwarded_header_is_ignored(self):
+        with override_settings(CAFE_REPLY_LIMIT_PER_IP=1), moderator_says('publish'):
+            self.assertEqual(self.post(HTTP_X_FORWARDED_FOR='1.1.1.1').status_code, 201)
+            self.client.cookies.clear()
+            self.assertEqual(self.post(HTTP_X_FORWARDED_FOR='2.2.2.2').status_code, 429)
 
     def test_bots_that_fill_the_hidden_field_are_quietly_dropped(self):
         with moderator_says('publish') as review:

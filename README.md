@@ -19,7 +19,7 @@ docker compose up -d --build
 [![postgres](https://img.shields.io/badge/postgres-17-4169E1?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org)
 [![docker](https://img.shields.io/badge/docker-compose-2496ED?style=flat-square&logo=docker&logoColor=white)](compose.yml)
 [![claude](https://img.shields.io/badge/agents-Claude-D97757?style=flat-square&logo=anthropic&logoColor=white)](https://docs.anthropic.com)
-[![tests](https://img.shields.io/badge/tests-75%20passing-brightgreen?style=flat-square)](footballcafe/core/tests/)
+[![tests](https://img.shields.io/badge/tests-77%20passing-brightgreen?style=flat-square)](footballcafe/core/tests/)
 
 </div>
 
@@ -129,6 +129,20 @@ docker compose -f compose-deployment.yml up -d --build
 `compose-deployment.yml` is the server setup: gunicorn, debug off, restarts by itself, and it refuses to
 start without a `.env`. To update later: `git pull`, then the same `docker compose` line again. The
 database lives in a Docker volume and survives updates.
+
+### With your own domain
+
+Point the domain at the server first: at your registrar, add two `A` records, `@` and `www`, both with
+the server's IP. Then, on the server:
+
+```
+ufw allow 80,443/tcp                                          # let the web in
+python3 scripts/make_env.py --domain cafe.example.com --force
+docker compose -f compose-deployment.yml up -d --build
+```
+
+That adds a Caddy container in front of the site. It gets the https certificate by itself and renews
+it. `--force` keeps your passwords and keys, so the database carries on as it was.
 
 ## Status
 

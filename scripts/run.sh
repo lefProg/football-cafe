@@ -9,4 +9,4 @@ if [ -n "$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$DJANGO_SUPERUSER_PASSWORD" ]; t
     python manage.py createsuperuser --noinput || true
 fi
 
-gunicorn --bind 0.0.0.0:8000 footballcafe.wsgi:application --workers 3 --threads 4 --timeout 60 --access-logfile - --error-logfile - --log-level info
+gunicorn --bind 0.0.0.0:8000 --forwarded-allow-ips="*" footballcafe.wsgi:application --workers 3 --threads 4 --timeout 60 --access-logfile - --error-logfile - --log-level info

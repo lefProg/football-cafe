@@ -188,7 +188,7 @@ class ReplyListCreateView(ListCreateAPIView):
         visitor = services.get_visitor(request) or uuid.uuid4()
         try:
             reply = services.submit_reply(
-                article, visitor, data['nickname'], data['text'], ip=request.META.get('REMOTE_ADDR', '')
+                article, visitor, data['nickname'], data['text'], ip=services.client_ip(request)
             )
         except services.RepliesClosed as error:
             raise PermissionDenied(str(error))

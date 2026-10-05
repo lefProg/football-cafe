@@ -38,6 +38,19 @@ def remember_visitor(response, visitor) -> None:
     )
 
 
+def client_ip(request) -> str:
+    """The visitor's address, for the reply rate limit.
+
+    Behind Caddy every request arrives from Caddy itself, which puts the real address last in
+    X-Forwarded-For. That header is only believed when the site runs in https mode, where Caddy is
+    the only way in; on a bare port anybody could type their own.
+    """
+    forwarded = request.META.get('HTTP_X_FORWARDED_FOR', '')
+    if settings.HTTPS and forwarded:
+        return forwarded.split(',')[-1].strip()
+    return request.META.get('REMOTE_ADDR', '')
+
+
 # ---------- the coupon ----------
 
 
