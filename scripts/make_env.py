@@ -223,10 +223,11 @@ DATABASE_PUBLIC_PORT={old.get('DATABASE_PUBLIC_PORT', '5440')}
     else:
         print('Another program on this server already answers on ports 80 and 443, so the cafe leaves them alone.')
         print(f'The cafe itself listens on port {web_port}. In that program (for example Nginx Proxy Manager), add a host:')
-        print(f'    domain names:      {domain}  and  www.{domain}')
+        print(f'    domain name:       {domain}')
         print(f'    forward to:        http://172.17.0.1:{web_port}')
         print('    SSL:               request a new certificate, force SSL')
         print(f'Then it will answer on {address}')
+        print(f'For www.{domain} add a redirection host there that sends it to {domain}.')
     return 0
 
 

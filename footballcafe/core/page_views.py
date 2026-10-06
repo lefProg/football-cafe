@@ -1,11 +1,31 @@
 """The pages people read. They only show things: every vote and reply goes through the API (views.py)."""
 
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, render
+from django.templatetags.static import static
+from django.urls import reverse
 from django.views.decorators.csrf import ensure_csrf_cookie
 
 from core import services
 from core.models import Article
+
+
+def _article_data(request, article) -> dict:
+    """The piece described the way Google reads articles (schema.org), for the page's structured data."""
+    cafe = {'@type': 'Organization', 'name': 'Football Cafe', 'url': request.build_absolute_uri(reverse('home'))}
+    return {
+        '@context': 'https://schema.org',
+        '@type': 'OpinionNewsArticle',
+        'headline': article.title,
+        'description': article.standfirst,
+        'datePublished': article.published_at.isoformat(),
+        'dateModified': max(article.updated_at, article.published_at).isoformat(),
+        'mainEntityOfPage': request.build_absolute_uri(article.get_absolute_url()),
+        'image': request.build_absolute_uri(static('og-default.png')),
+        'author': cafe,
+        'publisher': cafe,
+        'commentCount': article.replies.published().count(),
+    }
 
 
 def _piece_context(request, article, nav='') -> dict:
@@ -16,6 +36,9 @@ def _piece_context(request, article, nav='') -> dict:
     )
     return {
         'nav': nav,
+        # One address per piece for search engines, also when it is shown as today's piece on the home page.
+        'canonical': request.build_absolute_uri(article.get_absolute_url()),
+        'article_data': _article_data(request, article) if article.is_published else None,
         'article': article,
         'coupon': services.coupon_state(article, services.get_visitor(request)),
         'arguments': arguments,
@@ -59,9 +82,28 @@ def replies(request, slug):
     return render(
         request,
         'replies.html',
-        {'article': article, 'replies': published, 'argument': argument, 'reply_count': published.count()},
+        {
+            'article': article,
+            'replies': published,
+            'argument': argument,
+            'reply_count': published.count(),
+            # The narrowed lists (?argument=) are the same replies again, so they point at the full list.
+            'canonical': request.build_absolute_uri(reverse('replies', args=[article.slug])),
+        },
     )
 
 
 def house_rules(request):
     return render(request, 'house_rules.html', {'nav': 'rules'})
+
+
+def robots(request):
+    """Tells search engines what to read: the pages, not the admin or the raw API."""
+    lines = [
+        'User-agent: *',
+        'Disallow: /counter/',
+        'Disallow: /api/',
+        '',
+        f'Sitemap: {request.build_absolute_uri(reverse("sitemap"))}',
+    ]
+    return HttpResponse('\n'.join(lines) + '\n', content_type='text/plain')

@@ -2,6 +2,11 @@
 {% load core_extras %}
 {% block title %}{{ article.title }} | Football Cafe{% endblock %}
 {% block description %}{{ article.standfirst }}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block og_title %}{{ article.title }}{% endblock %}
+{% block og_description %}{{ article.standfirst }}{% endblock %}
+{% block head_extra %}{% if article_data %}<meta property="article:published_time" content="{{ article.published_at|date:'c' }}">
+<script type="application/ld+json">{{ article_data|json_ld }}</script>{% else %}<meta name="robots" content="noindex">{% endif %}{% endblock %}
 {% block content %}
 <div class="dateline"><span>{% if article.is_published %}{{ article.published_at|date:"l j F Y" }}{% elif article.published_at %}Goes live {{ article.published_at|date:"l j F Y, H:i" }}{% else %}Not published yet{% endif %}</span><span>Read it, tick your coupon, argue back</span></div>
 <h1 class="headline">{{ article.title }}</h1>
